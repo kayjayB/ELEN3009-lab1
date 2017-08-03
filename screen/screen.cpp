@@ -209,3 +209,57 @@ string::size_type Screen::row() const
 	return (_cursor + _width)/_width;
 }
 
+// This function does require access to the internal representation of the Screen class since it needs
+// access to the height and the length of the screen. However, alternatively, these could be passed in 
+// as inputs to the function by the user, in which case access to the internal representation is not required.
+// By making the function a member of the screen class, the error checking is more accurate as there
+// is no chance of the user inputting the incorrect screen size.
+
+void Screen::emptySquares(string::size_type row, string::size_type col, string::size_type lengthSides) 
+{
+	bool check = checkRange(row,col);
+	int checkColumn = col+lengthSides;
+	int checkRow = row+lengthSides ;
+	if (check)
+	{	// Fill in the square
+		if (checkRow <= _width)
+		{
+			if (checkColumn <= _height)
+			{
+				for (int i=row; i<row+lengthSides; i++)
+				{
+					for (int j=col; j<col+lengthSides; j++)
+					{
+						move(i,j);
+						set('*'); 
+					}
+				}
+	
+						// Empty out the centre of the square
+				for (int i=row+1; i<row+lengthSides-1; i++)
+				{
+					for (int j=col+1; j<col+lengthSides-1; j++)
+					{
+						move(i,j);
+						set(' '); 
+					}
+				}
+			}
+			else 
+			{
+			cerr << "Size of square is too long for the height of the screen.\n";
+			return;
+			}
+		}
+		else
+		{
+			cerr << "Size of square is too long for the width of the screen.\n";
+		}
+	}
+	else 
+	{
+		cerr << "Coordinates out of range.\n";
+	}
+}
+
+	

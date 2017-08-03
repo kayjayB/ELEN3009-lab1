@@ -39,7 +39,7 @@ public:
 	// move the cursor to the specified row and column
 	void move(string::size_type row, string::size_type col);
 	void move(Direction dir);
-
+	
 	// get the character at the cursor's current position
 	char get() const { return _screen[_cursor]; }
 	// get the character at the specified row and column
@@ -58,6 +58,8 @@ public:
 	void display() const;
 	// check whether the specified co-ordinates lie within the screen
 	bool checkRange(string::size_type row, string::size_type col) const;
+	
+	void emptySquares(string::size_type row, string::size_type col, string::size_type lengthSides) ;
 
 private:
 	// private member functions
