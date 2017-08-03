@@ -5,6 +5,8 @@
 #include <iostream>
 using namespace std;
 
+enum class Direction {HOME, FORWARD, BACK, UP, DOWN, END};
+
 // The unsigned integral type which is used to store the number of
 // characters in a string is nested within the string class, so it
 // is accessed using "string::size_type".
@@ -36,6 +38,7 @@ public:
 	void down();
 	// move the cursor to the specified row and column
 	void move(string::size_type row, string::size_type col);
+	void move(Direction dir);
 
 	// get the character at the cursor's current position
 	char get() const { return _screen[_cursor]; }

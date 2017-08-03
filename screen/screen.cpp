@@ -69,6 +69,29 @@ void Screen::move( string::size_type row, string::size_type col )
 	return;
 }
 
+// This member function is not a necessity for clients since the functions home(),forward() etc already existed. 
+// By creating this function, we are not making it easier for the user to use since the function still needs to be called with 
+// Direction:: HOME etc.
+void Screen::move(Direction dir)
+{
+	switch (dir ) {
+		case Direction::HOME: home();
+		break;
+		case Direction::FORWARD: forward();
+		break;
+		case Direction::BACK: back();
+		break;
+		case Direction::UP: up();
+		break;
+		case Direction::DOWN: down();
+		break;
+		case Direction::END: end();
+		break;
+	}
+	
+	return;
+}
+
 char Screen::get( string::size_type row, string::size_type col )
 {
 	// position _cursor
