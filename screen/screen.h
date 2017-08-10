@@ -5,6 +5,17 @@
 #include <iostream>
 using namespace std;
 
+enum class Direction {HOME, FORWARD, BACK, UP, DOWN, END};
+
+// A more intuitive representation would be using integers.
+
+// You musn't change the interface since other users may have access to the public functions
+// and changing them may change the behaviour of public members.
+// The users don't have access to the internal representation, as long as the names of the variables 
+// and functions remain the same, the user's program won't be affected, and thus we can change the 
+// internal representation.
+
+
 // The unsigned integral type which is used to store the number of
 // characters in a string is nested within the string class, so it
 // is accessed using "string::size_type".
@@ -36,7 +47,8 @@ public:
 	void down();
 	// move the cursor to the specified row and column
 	void move(string::size_type row, string::size_type col);
-
+	void move(Direction dir);
+	
 	// get the character at the cursor's current position
 	char get() const { return _screen[_cursor]; }
 	// get the character at the specified row and column
@@ -55,6 +67,8 @@ public:
 	void display() const;
 	// check whether the specified co-ordinates lie within the screen
 	bool checkRange(string::size_type row, string::size_type col) const;
+	
+	void emptySquares(string::size_type row, string::size_type col, string::size_type lengthSides) ;
 
 private:
 	// private member functions

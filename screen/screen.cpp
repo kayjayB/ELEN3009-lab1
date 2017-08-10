@@ -1,7 +1,7 @@
 #include "screen.h"
 
 // 0 represents the top-left screen element
-const string::size_type TOP_LEFT = 0;
+const string::size_type TOP_LEFT = 0; // the variable TOP_LEFT cannot be changed within the program
 
 // Screen's constructor
 Screen::Screen(string::size_type height, string::size_type width, char bkground):
@@ -38,7 +38,9 @@ void Screen::up()
 {   // move _cursor up one row of screen
 	// do not wrap around
 	if ( row() == 1 ) // at top?
-		cerr << "Screen::up - Cannot wrap around in a vertical direction" << endl;
+	
+	// Note: This can only be used for a square screen
+		_cursor= _cursor+ _width*_height - _width +1;
 	else
 		_cursor -= _width;
 
@@ -49,7 +51,10 @@ void Screen::down()
 {   // move _cursor down one row of screen
 	// do not wrap around
 	if ( row() == _height ) // at bottom?
-		cerr << "Screen::down - Cannot wrap around in a vertical direction" << endl;
+	
+	// Note: This can only be used for a square screen
+		_cursor= _cursor - _width*_height + _width -1 ;
+	
 	else
 		_cursor += _width;
 
@@ -66,6 +71,29 @@ void Screen::move( string::size_type row, string::size_type col )
 		_cursor = row_loc + col - 1;
 	}
 
+	return;
+}
+
+// This member function is not a necessity for clients since the functions home(),forward() etc already existed. 
+// By creating this function, we are not making it easier for the user to use since the function still needs to be called with 
+// Direction:: HOME etc.
+void Screen::move(Direction dir)
+{
+	switch (dir ) {
+		case Direction::HOME: home();
+		break;
+		case Direction::FORWARD: forward();
+		break;
+		case Direction::BACK: back();
+		break;
+		case Direction::UP: up();
+		break;
+		case Direction::DOWN: down();
+		break;
+		case Direction::END: end();
+		break;
+	}
+	
 	return;
 }
 
@@ -86,7 +114,8 @@ void Screen::set( char ch )
 	return;
 }
 
-void Screen::set( const string& s )
+void Screen::set( const string& s ) // the formal parameter s receives the address of the actual parameter, 
+// but cannot modify the contents of the actual parameter. 
 {   // write string beginning at current _cursor position
 	auto space = remainingSpace();
 	auto len = s.size();
@@ -136,7 +165,7 @@ void Screen::reSize( string::size_type h, string::size_type w, char bkground )
 		string::size_type offset = w * ix; // row position
 		for ( string::size_type iy = 0; iy < _width; ++iy )
 			// for each column, assign the old value
-			_screen.at(offset + iy) = local[ local_pos++ ];
+			_screen.at(offset + iy) = local[ local_pos++ ]; // Returns the element at the position specified by offset+iy
 	}
 
 	_height = h;
@@ -148,7 +177,7 @@ void Screen::reSize( string::size_type h, string::size_type w, char bkground )
 
 void Screen::display() const
 {
-	for ( string::size_type ix = 0; ix < _height; ++ix )
+	for ( string::size_type ix = 0; ix < _height; ++ix ) // The function cannot modify the member variables of the class 
 	{ // for each row
 		string::size_type offset = _width * ix; // row position
 		for ( string::size_type iy = 0; iy < _width; ++iy )
@@ -180,3 +209,57 @@ string::size_type Screen::row() const
 	return (_cursor + _width)/_width;
 }
 
+// This function does require access to the internal representation of the Screen class since it needs
+// access to the height and the length of the screen. However, alternatively, these could be passed in 
+// as inputs to the function by the user, in which case access to the internal representation is not required.
+// By making the function a member of the screen class, the error checking is more accurate as there
+// is no chance of the user inputting the incorrect screen size.
+
+void Screen::emptySquares(string::size_type row, string::size_type col, string::size_type lengthSides) 
+{
+	bool check = checkRange(row,col);
+	int checkColumn = col+lengthSides;
+	int checkRow = row+lengthSides ;
+	if (check)
+	{	// Fill in the square
+		if (checkRow <= _width)
+		{
+			if (checkColumn <= _height)
+			{
+				for (int i=row; i<row+lengthSides; i++)
+				{
+					for (int j=col; j<col+lengthSides; j++)
+					{
+						move(i,j);
+						set('*'); 
+					}
+				}
+	
+						// Empty out the centre of the square
+				for (int i=row+1; i<row+lengthSides-1; i++)
+				{
+					for (int j=col+1; j<col+lengthSides-1; j++)
+					{
+						move(i,j);
+						set(' '); 
+					}
+				}
+			}
+			else 
+			{
+			cerr << "Size of square is too long for the height of the screen.\n";
+			return;
+			}
+		}
+		else
+		{
+			cerr << "Size of square is too long for the width of the screen.\n";
+		}
+	}
+	else 
+	{
+		cerr << "Coordinates out of range.\n";
+	}
+}
+
+	
